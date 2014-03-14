@@ -1,56 +1,48 @@
-﻿$(function () {
-
-	$.fn.logging = function (val) {
-
-		var getType = function (val) {
-			if (typeof val === 'undefined') return 'undefined';
-			if (typeof val === 'object' && !val) return 'null';
-			return ({}).toString.call(val).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+﻿(function($) {
+	$.fn.log = function(val) {
+		this.getType = function(val) {
+			try {
+				if (typeof val === 'undefined') return 'undefined';
+				if (typeof val === 'object' && !val) return 'null';
+				return ({}).toString.call(val).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+			} catch (ex) {
+				return 'undefined';
+			}
 		};
-
-		var isConsole = function () {
+		this.isConsole = function() {
 			return (this.console !== undefined && this.console !== null && this.console.log !== undefined);
 		};
-
-		var isString = function (val) {
-			var type = getType(val);
-			return (type == 'string' || type == 'number' || type == 'boolean');
+		this.isString = function(val) {
+			var type = this.getType(val);
+			return (type === 'string' || type === 'number' || type === 'boolean');
 		};
-
-		var getConsolVal = function (val) {
-			if (val !== undefined && val != null && getType(val)) {
-				if (isString(val)) {
+		this.getConsolVal = function(val) {
+			if (val !== undefined && val !== null && this.getType(val)) {
+				if (this.isString(val)) {
 					return val;
-				}
-				else if (getType(val) == 'object') {
+				} else if (this.getType(val) === 'object') {
 					return val;
-				}
-				else {
-					return getType(val);
+				} else {
+					return this.getType(val);
 				}
 			}
 			return undefined;
 		};
-
-		var getTextVal = function (val) {
-			if (val !== undefined && val != null && getType(val)) {
-				if (isString(val)) {
+		this.getTextVal = function(val) {
+			if (val !== undefined && val !== null && this.getType(val)) {
+				if (this.isString(val)) {
 					return val;
 				}
 			}
 			return undefined;
 		};
-
-		if (isConsole()) {
-			var toLog = getConsolVal(val);
-			if (toLog !== undefined) {
+		if (this.isConsole()) {
+			var toLog = this.getConsolVal(val);
+			if (toLog !== undefined && toLog !== null && toLog !== 'undefined' && toLog !== 'null') {
 				console.log(toLog);
-			}
-			else {
+			} else {
 				console.log('Value in undefined');
 			}
-		} else {
-			document.write(getTextVal(val));
-		};
+		}
 	};
-});
+})(jQuery);
